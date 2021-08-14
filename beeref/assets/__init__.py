@@ -17,6 +17,7 @@
 
 import logging
 import os.path
+import platform
 
 from PyQt6 import QtGui, QtWidgets
 
@@ -26,7 +27,13 @@ logger = logging.getLogger(__name__)
 
 class BeeAssets:
     _instance = None
-    PATH = os.path.dirname(__file__)
+    if platform.system() == "Darwin":
+        PATH = os.path.join(
+            os.environ.get('RESOURCEPATH', os.path.dirname(__file__)),
+            'assets'
+        )
+    else:
+        PATH = os.path.dirname(__file__)
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

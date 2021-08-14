@@ -1,4 +1,54 @@
 from setuptools import setup
+from beeref import constants
+import platform
+from glob import glob
+
+main_script = 'beeref/__main__.py'
+assets_dir = 'beeref/assets'
+
+if platform.system() == 'Darwin':
+    PLIST_INFO = {
+        'CFBundleName': constants.APPNAME,
+        'CFBundleDisplayName': constants.APPNAME,
+        'CFBundleIdentifier': "org.beeref.app",
+        'CFBundleVersion': str(constants.VERSION),
+        'CFBundleShortVersionString': str(constants.VERSION),
+        'CFBundleDocumentTypes': [{
+            'CFBundleTypeRole': 'Viewer',
+            'CFBundleTypeOSTypes': ['****', 'fold', 'disk'],
+            'CFBundleTypeExtensions': ['bee'],
+            'CFBundleTypeIconFile': 'logo.icns',
+            'CFBundleTypeMIMETypes': 'application/octet-stream',
+            'CFBundleTypeName': 'BeeRef Document'
+        }]
+    }
+
+    extra_options = dict(
+        setup_requires=['py2app'],
+        app=[main_script],
+        data_files=[
+            ('assets', glob(assets_dir + '/*.png'))
+        ],
+        options={
+            'py2app': {
+                'argv_emulation': True,
+                'plist': PLIST_INFO,
+                'iconfile': 'beeref/assets/logo.icns',
+                'packages': [
+                    'PyQt6'
+                ]
+            }
+        }
+    )
+elif platform.system() == 'win32':
+    # TOOD
+    pass
+else:
+    extra_options = dict(
+        # Normally unix-like platforms will use "setup.py install" and install
+        # the main script as such
+        scripts=[main_script]
+    )
 
 setup(
     name='BeeRef',
@@ -31,4 +81,5 @@ setup(
         'beeref.assets': ['*.png'],
         'beeref': ['documentation/*.html'],
     },
+    **extra_options
 )
